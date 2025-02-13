@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEPE Miner</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+        }
+        .container {
+            padding: 20px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .button:disabled {
+            background-color: #777;
+            cursor: not-allowed;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐸 PEPE Miner</h1>
+        <p>Ваш баланс: <span id="balance">0</span> PEPE</p>
+        <p>Приглашено друзей: <span id="referrals">0</span></p>
+        <p>Фарм закончится через: <span id="timer">0</span> секунд</p>
+        <button class="button" id="mineButton" onclick="startMining()">🔨 Начать майнинг</button>
+        <button class="button" id="shopButton" onclick="toggleShop()">🛒 Магазин</button>
+        
+        <div id="shop" class="hidden">
+            <h2>🛒 Магазин</h2>
+            <button class="button" id="upgrade1" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
+            <button class="button" id="upgrade2" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
+        </div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Растягиваем WebApp
+
+        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 0;
+        let miningEndTime = localStorage.getItem("miningEndTime") ? parseInt(localStorage.getItem("miningEndTime")) : 0;
+        let miningInProgress = localStorage.getItem("miningInProgress") === "true";
+        let basePepePerSecond = 20000;
+        let bonusPepePerSecond = localStorage.getItem("bonusPepePerSecond") ? parseInt(localStorage.getItem("bonusPepePerSecond")) : 0;
+        let totalMiningTime = 5; // 5 секунд
+
+        document.getElementById("balance").innerText = balance;
+        updateTimer();
+
+        function startMining() {
+            const now = Math.floor(Date.now() / 1000);
+            if (!miningInProgress) {
+                miningEndTime = now + totalMiningTime;
+                localStorage.setItem("miningEndTime", miningEndTime);
+                localStorage.setItem("miningInProgress", "true");
+                document.getElementById("mineButton").disabled = true;
+                updateTimer();
+            }
+        }
+
+        function updateTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            if (miningEndTime > now) {
+                let remainingTime = miningEndTime - now;
+                document.getElementById("timer").innerText = remainingTime;
+                balance += basePepePerSecond + bonusPepePerSecond;
+                document.getElementById("balance").innerText = balance;
+                localStorage.setItem("balance", balance);
+                setTimeout(updateTimer, 1000);
+            } else {
+                if (miningInProgress) {
+                    localStorage.setItem("miningInProgress", "false");
+                    document.getElementById("mineButton").disabled = false;
+                }
+                document.getElementById("timer").innerText = "0";
+            }
+        }
+
+        function buyUpgrade(level) {
+            if (level === 1 && balance >= 100000) {
+                balance -= 100000;
+                bonusPepePerSecond += 2000;
+            } else if (level === 2 && balance >= 300000) {
+                balance -= 300000;
+                bonusPepePerSecond += 5000;
+            } else {
+                alert("Недостаточно PEPE!");
+                return;
+            }
+            localStorage.setItem("balance", balance);
+            localStorage.setItem("bonusPepePerSecond", bonusPepePerSecond);
+            document.getElementById("balance").innerText = balance;
+        }
+
+        function toggleShop() {
+            let shop = document.getElementById("shop");
+            shop.classList.toggle("hidden");
+        }
+
+        window.onload = function() {
+            const now = Math.floor(Date.now() / 1000);
+            if (miningEndTime > now) {
+                document.getElementById("mineButton").disabled = true;
+            } else {
+                document.getElementById("mineButton").disabled = false;
+            }
+        };
+    </script>
+</body>
+</html>
