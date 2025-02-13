@@ -19,23 +19,43 @@
             border-radius: 10px;
             display: inline-block;
         }
-        .button {
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .start-button {
             background-color: #4CAF50;
             color: white;
-            padding: 20px;
+            padding: 15px;
             border: none;
             cursor: pointer;
             font-size: 20px;
             margin-top: 20px;
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            text-align: center;
-            line-height: 60px;
+            border-radius: 20px;
+            width: 120px;
         }
-        .button:disabled {
+        .start-button:disabled {
             background-color: #777;
             cursor: not-allowed;
+        }
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            background-color: #00AEEF;
+            padding: 10px;
+            justify-content: space-around;
+        }
+        .menu-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
         }
         .hidden {
             display: none;
@@ -43,27 +63,31 @@
     </style>
 </head>
 <body>
+    <div class="balance">💰 <span id="balance">16543.0043</span></div>
     <div class="container" id="mainPage">
-        <h1>🐸 PEPE Miner</h1>
-        <p>Ваш баланс: <span id="balance">0</span> PEPE</p>
-        <p>Фарм закончится через: <span id="timer">0</span> секунд</p>
-        <button class="button" id="mineButton" onclick="startMining()">START</button>
-        <button class="button" onclick="openShop()">🛒 Магазин</button>
+        <button class="start-button" id="mineButton" onclick="startMining()">Start</button>
     </div>
 
     <div class="container hidden" id="shopPage">
         <h1>🛒 Магазин</h1>
-        <button class="button" id="upgrade1" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
-        <button class="button" id="upgrade2" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
+        <button class="start-button" id="upgrade1" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
+        <button class="start-button" id="upgrade2" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
         <br>
-        <button class="button" onclick="closeShop()">⬅ Назад</button>
+        <button class="start-button" onclick="closeShop()">⬅ Назад</button>
+    </div>
+
+    <div class="bottom-menu">
+        <button class="menu-button" onclick="openShop()">🛒 Магазин</button>
+        <button class="menu-button" onclick="goHome()">⛏️ Mine</button>
+        <button class="menu-button">🤝 Рефералы</button>
+        <button class="menu-button">💸 Вывод</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); // Растягиваем WebApp
 
-        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 0;
+        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 16543.0043;
         let miningEndTime = localStorage.getItem("miningEndTime") ? parseInt(localStorage.getItem("miningEndTime")) : 0;
         let basePepePerSecond = 20000;
         let bonusPepePerSecond = localStorage.getItem("bonusPepePerSecond") ? parseInt(localStorage.getItem("bonusPepePerSecond")) : 0;
@@ -84,14 +108,12 @@
             const now = Math.floor(Date.now() / 1000);
             if (miningEndTime > now) {
                 let remainingTime = miningEndTime - now;
-                document.getElementById("timer").innerText = remainingTime;
                 balance += basePepePerSecond + bonusPepePerSecond;
                 document.getElementById("balance").innerText = balance;
                 localStorage.setItem("balance", balance);
                 setTimeout(updateTimer, 1000);
             } else {
                 document.getElementById("mineButton").disabled = false;
-                document.getElementById("timer").innerText = "0";
             }
         }
 
@@ -121,14 +143,10 @@
             document.getElementById("mainPage").classList.remove("hidden");
         }
 
-        window.onload = function() {
-            const now = Math.floor(Date.now() / 1000);
-            if (miningEndTime > now) {
-                document.getElementById("mineButton").disabled = true;
-            } else {
-                document.getElementById("mineButton").disabled = false;
-            }
-        };
+        function goHome() {
+            document.getElementById("shopPage").classList.add("hidden");
+            document.getElementById("mainPage").classList.remove("hidden");
+        }
     </script>
 </body>
 </html>
