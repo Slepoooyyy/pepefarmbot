@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>PEPE Miner</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -17,6 +17,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
+            touch-action: none;
         }
         .balance-container {
             display: flex;
@@ -70,6 +72,29 @@
         .hidden {
             display: none;
         }
+        .shop-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            display: none;
+            text-align: center;
+        }
+        .shop-button {
+            background-color: #FFD700;
+            color: black;
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
@@ -81,50 +106,61 @@
     <div class="bottom-menu">
         <button class="menu-button" onclick="openShop()">🛒 Магазин</button>
         <button class="menu-button" onclick="goHome()">⛏️ Mine</button>
-        <button class="menu-button">🤝 Рефералы</button>
-        <button class="menu-button">💸 Вывод</button>
+        <button class="menu-button" onclick="comingSoon()">📝 Квесты</button>
+        <button class="menu-button" onclick="comingSoon()">🤝 Рефералы</button>
+        <button class="menu-button" onclick="comingSoon()">💸 Вывод</button>
     </div>
 
+    <div class="shop-container" id="shopPage">
+        <h2>🛒 Магазин</h2>
+        <button class="shop-button" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
+        <button class="shop-button" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
+        <br>
+        <button class="shop-button" onclick="closeShop()">⬅ Назад</button>
+    </div>
+
+    <div class="coming-soon" id="comingSoonMessage">Coming soon...</div>
+
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand(); // Растягиваем WebApp
-
         let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 7371170;
-        let miningEndTime = localStorage.getItem("miningEndTime") ? parseInt(localStorage.getItem("miningEndTime")) : 0;
-        let basePepePerSecond = 20000;
         let bonusPepePerSecond = localStorage.getItem("bonusPepePerSecond") ? parseInt(localStorage.getItem("bonusPepePerSecond")) : 0;
-        let totalMiningTime = 5; // 5 секунд
-
         document.getElementById("balance").innerText = balance;
-        updateTimer();
 
         function startMining() {
-            const now = Math.floor(Date.now() / 1000);
-            miningEndTime = now + totalMiningTime;
-            localStorage.setItem("miningEndTime", miningEndTime);
-            document.getElementById("mineButton").disabled = true;
-            updateTimer();
+            balance += 20000 + bonusPepePerSecond;
+            document.getElementById("balance").innerText = balance;
+            localStorage.setItem("balance", balance);
         }
 
-        function updateTimer() {
-            const now = Math.floor(Date.now() / 1000);
-            if (miningEndTime > now) {
-                let remainingTime = miningEndTime - now;
-                balance += basePepePerSecond + bonusPepePerSecond;
-                document.getElementById("balance").innerText = balance;
-                localStorage.setItem("balance", balance);
-                setTimeout(updateTimer, 1000);
+        function buyUpgrade(level) {
+            if (level === 1 && balance >= 100000) {
+                balance -= 100000;
+                bonusPepePerSecond += 2000;
+            } else if (level === 2 && balance >= 300000) {
+                balance -= 300000;
+                bonusPepePerSecond += 5000;
             } else {
-                document.getElementById("mineButton").disabled = false;
+                alert("Недостаточно PEPE!");
+                return;
             }
+            localStorage.setItem("balance", balance);
+            localStorage.setItem("bonusPepePerSecond", bonusPepePerSecond);
+            document.getElementById("balance").innerText = balance;
         }
 
         function openShop() {
-            alert("Магазин пока в разработке!");
+            document.getElementById("shopPage").style.display = "block";
         }
-
+        function closeShop() {
+            document.getElementById("shopPage").style.display = "none";
+        }
         function goHome() {
-            alert("Главная страница!");
+            document.getElementById("shopPage").style.display = "none";
+        }
+        function comingSoon() {
+            let msg = document.getElementById("comingSoonMessage");
+            msg.style.display = "block";
+            setTimeout(() => { msg.style.display = "none"; }, 1500);
         }
     </script>
 </body>
