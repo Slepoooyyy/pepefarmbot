@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEPE Miner</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+        }
+        .container {
+            padding: 20px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐸 PEPE Miner</h1>
+        <p>Ваш баланс: <span id="balance">0</span> PEPE</p>
+        <p>Приглашено друзей: <span id="referrals">0</span></p>
+        <p>Фарм закончится через: <span id="timer">0</span> часов</p>
+        <button class="button" onclick="startMining()">🔨 Начать майнинг</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Растягиваем WebApp
+
+        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 0;
+        let miningEndTime = localStorage.getItem("miningEndTime") ? parseInt(localStorage.getItem("miningEndTime")) : 0;
+
+        document.getElementById("balance").innerText = balance;
+        updateTimer();
+
+        function startMining() {
+            const now = Math.floor(Date.now() / 1000); // Текущее время в секундах
+            miningEndTime = now + (6 * 60 * 60); // Добавляем 6 часов
+            localStorage.setItem("miningEndTime", miningEndTime);
+            updateTimer();
+        }
+
+        function updateTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            if (miningEndTime > now) {
+                let remainingTime = miningEndTime - now;
+                let hours = Math.floor(remainingTime / 3600);
+                let minutes = Math.floor((remainingTime % 3600) / 60);
+                let seconds = remainingTime % 60;
+                document.getElementById("timer").innerText = `${hours}ч ${minutes}м ${seconds}с`;
+                setTimeout(updateTimer, 2000); // Обновляем каждую 2 секунды
+            } else {
+                balance += 100000;
+                localStorage.setItem("balance", balance);
+                document.getElementById("balance").innerText = balance;
+                document.getElementById("timer").innerText = "0ч 0м 0с";
+            }
+        }
+    </script>
+</body>
+</html>
