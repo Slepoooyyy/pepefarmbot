@@ -70,11 +70,38 @@
         .menu-button:hover {
             color: #FFD700;
         }
+        .pepe-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .pepe {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+        .treadmill {
+            width: 100%;
+            position: absolute;
+            bottom: -10px;
+        }
+        .running {
+            animation: run 0.5s steps(2) infinite;
+        }
+        @keyframes run {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(5px); }
+            100% { transform: translateY(0px); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="balance">💰 <span id="balance">7371170</span> PEPE</div>
+        <div class="pepe-container">
+            <img src="/mnt/data/A_2D_cartoon-style_image_of_PEPE_the_frog_standing.png" id="pepe" class="pepe">
+            <img src="/mnt/data/A_2D_cartoon-style_image_of_PEPE_the_frog_running_.png" class="treadmill">
+        </div>
         <button class="start-button" id="mineButton" onclick="startMining()">Start Mining</button>
     </div>
 
@@ -90,11 +117,18 @@
         let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 7371170;
         let bonusPepePerSecond = localStorage.getItem("bonusPepePerSecond") ? parseInt(localStorage.getItem("bonusPepePerSecond")) : 0;
         document.getElementById("balance").innerText = balance;
+        let pepe = document.getElementById("pepe");
 
         function startMining() {
             balance += 20000 + bonusPepePerSecond;
             document.getElementById("balance").innerText = balance;
             localStorage.setItem("balance", balance);
+            pepe.src = "/mnt/data/A_2D_cartoon-style_image_of_PEPE_the_frog_running_.png";
+            pepe.classList.add("running");
+            setTimeout(() => {
+                pepe.src = "/mnt/data/A_2D_cartoon-style_image_of_PEPE_the_frog_standing.png";
+                pepe.classList.remove("running");
+            }, 5000);
         }
 
         function openShop() {
