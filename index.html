@@ -12,19 +12,26 @@
             background: url('https://i.imgur.com/yePc5B3.jpeg') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        .container {
-            padding: 20px;
+        .balance-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 15px;
+            position: absolute;
+            top: 20%;
         }
         .balance {
             font-size: 24px;
             font-weight: bold;
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            margin-left: 10px;
         }
         .start-button {
             background-color: #4CAF50;
@@ -33,9 +40,10 @@
             border: none;
             cursor: pointer;
             font-size: 20px;
-            margin-top: 20px;
             border-radius: 20px;
-            width: 120px;
+            width: 140px;
+            text-align: center;
+            margin-top: 15px;
         }
         .start-button:disabled {
             background-color: #777;
@@ -47,15 +55,17 @@
             width: 100%;
             display: flex;
             background-color: #00AEEF;
-            padding: 10px;
+            padding: 10px 0;
             justify-content: space-around;
         }
         .menu-button {
             background: none;
             border: none;
             color: white;
-            font-size: 18px;
+            font-size: 16px;
+            padding: 10px;
             cursor: pointer;
+            flex-grow: 1;
         }
         .hidden {
             display: none;
@@ -63,18 +73,10 @@
     </style>
 </head>
 <body>
-    <div class="balance">💰 <span id="balance">16543.0043</span></div>
-    <div class="container" id="mainPage">
-        <button class="start-button" id="mineButton" onclick="startMining()">Start</button>
+    <div class="balance-container">
+        <span class="balance">💰 <span id="balance">7371170</span></span>
     </div>
-
-    <div class="container hidden" id="shopPage">
-        <h1>🛒 Магазин</h1>
-        <button class="start-button" id="upgrade1" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
-        <button class="start-button" id="upgrade2" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
-        <br>
-        <button class="start-button" onclick="closeShop()">⬅ Назад</button>
-    </div>
+    <button class="start-button" id="mineButton" onclick="startMining()">Start</button>
 
     <div class="bottom-menu">
         <button class="menu-button" onclick="openShop()">🛒 Магазин</button>
@@ -87,7 +89,7 @@
         let tg = window.Telegram.WebApp;
         tg.expand(); // Растягиваем WebApp
 
-        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 16543.0043;
+        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 7371170;
         let miningEndTime = localStorage.getItem("miningEndTime") ? parseInt(localStorage.getItem("miningEndTime")) : 0;
         let basePepePerSecond = 20000;
         let bonusPepePerSecond = localStorage.getItem("bonusPepePerSecond") ? parseInt(localStorage.getItem("bonusPepePerSecond")) : 0;
@@ -117,35 +119,12 @@
             }
         }
 
-        function buyUpgrade(level) {
-            if (level === 1 && balance >= 100000) {
-                balance -= 100000;
-                bonusPepePerSecond += 2000;
-            } else if (level === 2 && balance >= 300000) {
-                balance -= 300000;
-                bonusPepePerSecond += 5000;
-            } else {
-                alert("Недостаточно PEPE!");
-                return;
-            }
-            localStorage.setItem("balance", balance);
-            localStorage.setItem("bonusPepePerSecond", bonusPepePerSecond);
-            document.getElementById("balance").innerText = balance;
-        }
-
         function openShop() {
-            document.getElementById("mainPage").classList.add("hidden");
-            document.getElementById("shopPage").classList.remove("hidden");
-        }
-
-        function closeShop() {
-            document.getElementById("shopPage").classList.add("hidden");
-            document.getElementById("mainPage").classList.remove("hidden");
+            alert("Магазин пока в разработке!");
         }
 
         function goHome() {
-            document.getElementById("shopPage").classList.add("hidden");
-            document.getElementById("mainPage").classList.remove("hidden");
+            alert("Главная страница!");
         }
     </script>
 </body>
