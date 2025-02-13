@@ -22,32 +22,41 @@
         .button {
             background-color: #4CAF50;
             color: white;
-            padding: 15px;
+            padding: 20px;
             border: none;
             cursor: pointer;
             font-size: 20px;
             margin-top: 20px;
-            border-radius: 5px;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            line-height: 60px;
         }
         .button:disabled {
             background-color: #777;
             cursor: not-allowed;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="mainPage">
         <h1>🐸 PEPE Miner</h1>
         <p>Ваш баланс: <span id="balance">0</span> PEPE</p>
         <p>Фарм закончится через: <span id="timer">0</span> секунд</p>
-        <button class="button" id="mineButton" onclick="startMining()">🔨 Начать майнинг</button>
-        <button class="button" id="shopButton" onclick="toggleShop()">🛒 Магазин</button>
-        
-        <div id="shop" class="hidden">
-            <h2>🛒 Магазин</h2>
-            <button class="button" id="upgrade1" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
-            <button class="button" id="upgrade2" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
-        </div>
+        <button class="button" id="mineButton" onclick="startMining()">START</button>
+        <button class="button" onclick="openShop()">🛒 Магазин</button>
+    </div>
+
+    <div class="container hidden" id="shopPage">
+        <h1>🛒 Магазин</h1>
+        <button class="button" id="upgrade1" onclick="buyUpgrade(1)">💩 Какащкэ (100000 PEPE) +2k/sec</button>
+        <button class="button" id="upgrade2" onclick="buyUpgrade(2)">💩💩💩 Какащечкээ (300000 PEPE) +5k/sec</button>
+        <br>
+        <button class="button" onclick="closeShop()">⬅ Назад</button>
     </div>
 
     <script>
@@ -102,9 +111,14 @@
             document.getElementById("balance").innerText = balance;
         }
 
-        function toggleShop() {
-            let shop = document.getElementById("shop");
-            shop.classList.toggle("hidden");
+        function openShop() {
+            document.getElementById("mainPage").classList.add("hidden");
+            document.getElementById("shopPage").classList.remove("hidden");
+        }
+
+        function closeShop() {
+            document.getElementById("shopPage").classList.add("hidden");
+            document.getElementById("mainPage").classList.remove("hidden");
         }
 
         window.onload = function() {
