@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEPE Miner</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+        }
+        .container {
+            padding: 20px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .button:disabled {
+            background-color: #777;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐸 PEPE Miner</h1>
+        <p>Ваш баланс: <span id="balance">0</span> PEPE</p>
+        <p>Приглашено друзей: <span id="referrals">0</span></p>
+        <p>Фарм закончится через: <span id="timer">0</span> секунд</p>
+        <button class="button" id="mineButton" onclick="startMining()">🔨 Начать майнинг</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Растягиваем WebApp
+
+        let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 0;
+        let miningEndTime = localStorage.getItem("miningEndTime") ? parseInt(localStorage.getItem("miningEndTime")) : 0;
+        let miningInProgress = localStorage.getItem("miningInProgress") === "true";
+        let pepePerSecond = 20000; // 100000 за 5 секунд = 20000 в секунду
+        let totalMiningTime = 5; // 5 секунд
+
+        document.getElementById("balance").innerText = balance;
+        updateTimer();
+
+        function startMining() {
+            const now = Math.floor(Date.now() / 1000);
+            if (!miningInProgress) {
+                miningEndTime = now + totalMiningTime;
+                localStorage.setItem("miningEndTime", miningEndTime);
+                localStorage.setItem("miningInProgress", "true");
+                document.getElementById("mineButton").disabled = true;
+                updateTimer();
+            }
+        }
+
+        function updateTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            if (miningEndTime > now) {
+                let remainingTime = miningEndTime - now;
+                document.getElementById("timer").innerText = remainingTime;
+                balance += pepePerSecond;
+                document.getElementById("balance").innerText = balance;
+                localStorage.setItem("balance", balance);
+                setTimeout(updateTimer, 1000);
+            } else {
+                if (miningInProgress) {
+                    localStorage.setItem("miningInProgress", "false");
+                    document.getElementById("mineButton").disabled = false;
+                }
+                document.getElementById("timer").innerText = "0";
+            }
+        }
+    </script>
+</body>
+</html>
